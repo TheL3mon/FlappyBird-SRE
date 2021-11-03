@@ -84,17 +84,34 @@ void BirdGame::init() {
     float heighVariation = 80;
     float xVariation = 50;
 
+    auto spriteCoin = spriteAtlas->get("coin.png");
+    spriteCoin.setScale({ 1, 1 });
     for (int i=0;i<length;i++) {
         auto obj = createGameObject();
         obj->name = "Wall bottom";
         auto so = obj->addComponent<SpriteComponent>();
+        auto physwall = obj->addComponent<PhysicsComponent>();
 
         float xOffset = xVariation * cos(i*curve*0.2f);
         glm::vec2 pos{i*300+xOffset,spriteBottom.getSpriteSize().y/2 + sin(i*curve)*heighVariation};
         obj->setPosition(pos);
         so->setSprite(spriteBottom);
+        
+        glm::vec2 s{ spriteBottom.getSpriteSize().x * spriteBottom.getScale().x / 2, spriteBottom.getSpriteSize().y * spriteBottom.getScale().y / 2 };
+        physwall->initBox(b2_staticBody, s/physicsScale, { obj->getPosition().x / physicsScale, obj->getPosition().y / physicsScale }, 1);
 
-        glm::vec2 s { spriteBottom.getSpriteSize().x * spriteBottom.getScale().x/2, spriteBottom.getSpriteSize().y * spriteBottom.getScale().y/2};
+
+        // coins
+        auto objCoin = createGameObject();
+        objCoin->name = "Coin";
+        auto soCoin = objCoin->addComponent<SpriteComponent>();
+        auto physCoin = objCoin->addComponent<PhysicsComponent>();
+
+        glm::vec2 posCoin = glm::vec2(pos.x + 150, pos.y + 215);
+        objCoin->setPosition(posCoin);
+        soCoin->setSprite(spriteCoin);
+
+        physCoin->initCircle(b2_staticBody, 10 / physicsScale, { objCoin->getPosition().x / physicsScale, objCoin->getPosition().y / physicsScale }, 1);
     }
     auto spriteTop = spriteAtlas->get("column_top.png");
     spriteTop.setScale({2,2});
@@ -102,12 +119,15 @@ void BirdGame::init() {
         auto obj = createGameObject();
         obj->name = "Wall top";
         auto so = obj->addComponent<SpriteComponent>();
+        auto physwall = obj->addComponent<PhysicsComponent>();
 
         float xOffset = xVariation * cos(i*curve*0.2f);
         glm::vec2 pos{ i*300+xOffset, windowSize.y-spriteTop.getSpriteSize().y/2 + sin(i*curve)*heighVariation};
         obj->setPosition(pos);
-        glm::vec2 s { spriteTop.getSpriteSize().x * spriteTop.getScale().x/2, spriteTop.getSpriteSize().y * spriteTop.getScale().y/2};
         so->setSprite(spriteTop);
+
+        glm::vec2 s{ spriteTop.getSpriteSize().x * spriteTop.getScale().x / 2, spriteTop.getSpriteSize().y * spriteTop.getScale().y / 2 };
+        physwall->initBox(b2_staticBody, s / physicsScale, { obj->getPosition().x / physicsScale, obj->getPosition().y / physicsScale }, 1);
     }
 
     background1Component.init("background.png");

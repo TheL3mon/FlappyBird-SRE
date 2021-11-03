@@ -30,6 +30,8 @@ public:
 
     void setGameState(GameState newState);
 private:
+    std::vector<std::shared_ptr<GameObject>> sceneObjects;
+
     sre::SDLRenderer r;
 
     void init();
@@ -46,7 +48,6 @@ private:
     std::shared_ptr<SideScrollingCamera> camera;
     std::shared_ptr<sre::SpriteAtlas> spriteAtlas;
 
-    std::vector<std::shared_ptr<GameObject>> sceneObjects;
     BackgroundComponent background1Component;
     BackgroundComponent background2Component;
 
