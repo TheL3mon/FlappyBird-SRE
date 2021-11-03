@@ -39,7 +39,6 @@ void BirdController::onCollisionStart(PhysicsComponent *comp) {
 
     if (comp->getGameObject()->name.find("Coin") != std::string::npos)
     {
-        comp->getGameObject()->removeComponent(comp->getGameObject()->getComponent<PhysicsComponent>());
         comp->getGameObject()->readyToDelete = true;
     }
 }

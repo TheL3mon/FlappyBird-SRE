@@ -112,6 +112,7 @@ void BirdGame::init() {
         soCoin->setSprite(spriteCoin);
 
         physCoin->initCircle(b2_staticBody, 10 / physicsScale, { objCoin->getPosition().x / physicsScale, objCoin->getPosition().y / physicsScale }, 1);
+        physCoin->setSensor(true);
     }
     auto spriteTop = spriteAtlas->get("column_top.png");
     spriteTop.setScale({2,2});
@@ -134,11 +135,22 @@ void BirdGame::init() {
     background2Component.init("background2.png");
 }
 
-void BirdGame::update(float time) {
+void BirdGame::update(float time) {    
     if (gameState == GameState::Running){
         updatePhysics();
     }
-    for (int i=0;i<sceneObjects.size();i++){
+
+    for (int i = 0; i < sceneObjects.size(); i++) {
+        if (sceneObjects[i]->readyToDelete)
+        {
+            //world->DestroyBody(sceneObjects[i]->getComponent<PhysicsComponent>().get()->body);
+            //deregisterPhysicsComponent(sceneObjects[i]->getComponent<PhysicsComponent>().get());
+            //sceneObjects[i]->getComponent<PhysicsComponent>().get()->~PhysicsComponent();
+            //sceneObjects[i]->removeComponent(sceneObjects[i]->getComponent<PhysicsComponent>());
+
+            sceneObjects.erase(sceneObjects.begin() + i);
+        }
+
         sceneObjects[i]->update(time);
     }
 }
@@ -226,7 +238,7 @@ void BirdGame::updatePhysics() {
     const int positionIterations = 2;
     const int velocityIterations = 6;
     world->Step(timeStep, velocityIterations, positionIterations);
-
+    
     for (auto phys : physicsComponentLookup){
         if (phys.second->rbType == b2_staticBody) continue;
         auto position = phys.second->body->GetPosition();
